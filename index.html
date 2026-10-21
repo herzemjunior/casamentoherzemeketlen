@@ -2871,6 +2871,68 @@ body:not(.story-screen) #screenNavigation { pointer-events: none; }
 .rsvp-feedback{min-height:1.5em;margin:16px 0;color:#392a26!important;font-size:14px;line-height:1.5}
 .wedding-rsvp-form button:disabled{opacity:.55;cursor:wait}
 
+
+/* CORREÇÃO: informações roláveis sem cortar o botão de fotos */
+#informacoes.experience-screen {
+  display: block !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(44px, 7vh, 76px) 22px 100px !important;
+}
+#informacoes.experience-screen > .section-content {
+  width: min(100%, 720px);
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: 40px;
+}
+#informacoes .information-list { margin-top: clamp(25px, 5vh, 45px); }
+#informacoes .information-list article { padding: clamp(16px, 2.7vh, 24px) 0; }
+#informacoes .photo-memory-strip { margin-top: 14px; }
+#informacoes .photo-callout { margin-top: 12px; }
+#informacoes .photo-drive-button {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 5;
+  margin-top: 18px;
+  border-radius: 3px;
+  box-shadow: 0 8px 22px rgba(60,73,56,.18);
+}
+#informacoes .photo-drive-button:focus-visible { outline: 3px solid #b77b83; outline-offset: 4px; }
+@media (max-width: 600px) {
+  #informacoes.experience-screen { padding: 38px 19px 110px !important; }
+  #informacoes .information-list article { grid-template-columns: 34px minmax(0,1fr); gap: 10px; }
+  #informacoes .photo-drive-button { width: 100%; letter-spacing: .07em; }
+}
+
+
+/* Detalhes discretos da celebração */
+.extra-info-wrap{width:min(100%,620px);margin:20px auto 0;text-align:center}
+.extra-info-trigger{display:inline-flex;align-items:center;gap:12px;border:1px solid rgba(66,56,47,.35);border-radius:99px;background:rgba(255,255,255,.23);color:#3e302b;padding:12px 20px;font:500 10px/1.3 "Montserrat",sans-serif;letter-spacing:.16em;cursor:pointer;transition:background .25s ease,border-color .25s ease}
+.extra-info-trigger:hover,.extra-info-trigger:focus-visible{background:rgba(255,255,255,.55);border-color:#626d59}
+.extra-info-trigger span{font-size:18px;transition:transform .25s}
+.extra-info-trigger[aria-expanded="true"] span{transform:rotate(180deg)}
+.extra-info-panel{margin:20px auto 0;padding:22px clamp(14px,3vw,28px);background:rgba(248,246,241,.77);border:1px solid rgba(98,109,89,.28);box-shadow:0 15px 45px rgba(57,46,41,.09);text-align:left;color:#392a26}
+.extra-info-panel[hidden]{display:none!important}
+.extra-info-intro{font:italic 23px/1.25 "Cormorant Garamond",serif;text-align:center;margin-bottom:12px}
+.extra-info-grid article{display:grid;grid-template-columns:25px 1fr;gap:10px;padding:13px 0;border-top:1px solid rgba(98,109,89,.19)}
+.extra-info-grid article>span{color:#626d59;font-size:21px}
+.extra-info-grid h3{font:500 clamp(22px,4vw,27px)/1.1 "Cormorant Garamond",serif;margin:0 0 6px}
+.extra-info-grid p{font:400 13px/1.6 "Montserrat",sans-serif;margin:0}
+/* Relógio do final secreto */
+.easter-countdown{width:min(100%,430px);margin:14px auto 4px;padding:12px 12px 10px;background:rgba(18,15,24,.72);border:1px solid rgba(255,232,220,.27);color:#fff7ed}
+.easter-countdown-label{font:500 clamp(8px,1.7vw,10px)/1.5 "Montserrat",sans-serif;letter-spacing:.09em;margin:0 0 10px}
+.easter-countdown-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.easter-countdown-grid>div{min-width:0;border-right:1px solid rgba(255,255,255,.2)}
+.easter-countdown-grid>div:last-child{border:0}
+.easter-countdown-grid strong{display:block;font:500 clamp(24px,5vw,36px)/1 "Cormorant Garamond",serif;font-variant-numeric:tabular-nums;color:#fff}
+.easter-countdown-grid span{display:block;margin-top:5px;font:500 clamp(7px,1.4vw,9px)/1.2 "Montserrat",sans-serif;letter-spacing:.05em;color:#f2d6c9}
+@media(max-height:720px){.easter-couple-wrap{height:clamp(125px,25vh,220px)!important}.easter-ending-card{max-height:calc(100svh - 18px);overflow-y:auto}.easter-countdown{margin-top:8px;padding:8px}.easter-countdown-label{margin-bottom:5px}}
+@media(max-width:600px){.easter-ending-card{max-height:calc(100svh - 16px);overflow-y:auto}.easter-couple-wrap{height:clamp(145px,29vh,250px)}.easter-countdown{margin-top:9px}}
+
 </style>
 <style id="continuousStoryAndReadability">
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -3269,9 +3331,9 @@ body,.cover,.hero,.countdown-section,.ceremony-section,.gifts-section,.final-sec
 /* O jogo retrô e o vídeo cinematográfico mantêm fundos próprios para não comprometer a arte. */
 </style>
 <style id="petal-fall-style">
-/* Pétalas discretas, sempre atrás do conteúdo interativo. */
-#petal-fall-layer{position:fixed;inset:0;z-index:850;pointer-events:none;overflow:hidden;contain:layout paint;isolation:isolate}
-#petal-fall-layer .petal{position:absolute;top:-12vh;left:var(--left);font-family:Georgia,serif;font-size:var(--size);line-height:1;color:#8b605e;opacity:0;filter:drop-shadow(0 1px 1px rgba(255,255,255,.15));animation:petal-descend var(--duration) linear var(--delay) infinite;will-change:transform,opacity;user-select:none}
+/* Pétalas mais presentes, suaves e sem bloquear interação. */
+#petal-fall-layer{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;contain:layout paint;isolation:isolate}
+#petal-fall-layer .petal{position:absolute;top:-12vh;left:var(--left);font-family:Georgia,serif;font-size:var(--size);line-height:1;color:#ffffff;opacity:0;filter:drop-shadow(0 1px 2px rgba(69,85,68,.18));animation:petal-descend var(--duration) linear var(--delay) infinite;will-change:transform,opacity;user-select:none}
 @keyframes petal-descend{0%{transform:translate3d(0,-8vh,0) rotate(0deg);opacity:0}9%{opacity:var(--alpha)}86%{opacity:var(--alpha)}100%{transform:translate3d(var(--drift),118vh,0) rotate(var(--spin));opacity:0}}
 /* As telas, cartões e textos ficam acima das pétalas. */
 .cover,.invitation,.experience-screen{isolation:isolate}
@@ -3888,7 +3950,7 @@ body,.cover,.hero,.countdown-section,.ceremony-section,.gifts-section,.final-sec
 
               <p>
                 Durante o casamento, tire muitas fotos e
-                compartilhe seus registros no nosso álbum.
+                envie seus registros para o nosso álbum de lembranças.
                 Queremos enxergar esse dia também pelos seus olhos.
               </p>
 
@@ -3898,16 +3960,16 @@ body,.cover,.hero,.countdown-section,.ceremony-section,.gifts-section,.final-sec
 
               <p class="photo-callout">
                 Fotografou? Não deixa só na galeria do celular.
-                Envie para o nosso álbum compartilhado.
+                Envie pelo formulário, sem precisar fazer login.
               </p>
 
               <a
                 class="photo-drive-button"
-                href="https://drive.google.com/drive/folders/COLE_AQUI_O_ID_DA_PASTA"
+                href="https://form.jotform.com/262936154562058"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                ENVIAR FOTOS PARA O ÁLBUM
+                COMPARTILHAR NOSSAS LEMBRANÇAS
                 <span>↗</span>
               </a>
 
@@ -3915,6 +3977,18 @@ body,.cover,.hero,.countdown-section,.ceremony-section,.gifts-section,.final-sec
 
           </article>
 
+        </div>
+
+        <div class="extra-info-wrap">
+          <button type="button" class="extra-info-trigger" id="extraInfoTrigger" aria-expanded="false" aria-controls="extraInfoPanel">✧ MAIS INFORMAÇÕES <span aria-hidden="true">⌄</span></button>
+          <div class="extra-info-panel" id="extraInfoPanel" hidden>
+            <p class="extra-info-intro">Pequenos detalhes para aproveitar o nosso grande dia ♡</p>
+            <div class="extra-info-grid">
+              <article><span aria-hidden="true">✿</span><div><h3>Os pequenos são bem-vindos!</h3><p>Teremos um espaço reservado para as crianças aproveitarem a festa também.</p></div></article>
+              <article><span aria-hidden="true">♡</span><div><h3>Um toque de rosa</h3><p>Para as madrinhas, a paleta escolhida é rosa. Cada tom vai deixar esse dia ainda mais especial!</p></div></article>
+              <article><span aria-hidden="true">◇</span><div><h3>O branco tem dona!</h3><p>Pedimos com carinho que evitem roupas brancas — essa cor fica reservada à noiva. ♡</p></div></article>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -4081,6 +4155,15 @@ body,.cover,.hero,.countdown-section,.ceremony-section,.gifts-section,.final-sec
         <h2 id="easterTitle">Você chegou até o fim! ♥</h2>
         <p>Agora só falta uma coisa:</p>
         <strong>encontrar a gente no dia <span>11.01.2027.</span></strong>
+      </div>
+      <div class="easter-countdown" aria-label="Contagem regressiva até 11 de janeiro de 2027, às 19 horas, no Acre">
+        <p class="easter-countdown-label">CONTANDO OS INSTANTES ATÉ O SIM · 11.01.2027 ÀS 19H</p>
+        <div class="easter-countdown-grid" id="easterCountdown" role="timer">
+          <div><strong data-unit="days">--</strong><span>DIAS</span></div>
+          <div><strong data-unit="hours">--</strong><span>HORAS</span></div>
+          <div><strong data-unit="minutes">--</strong><span>MINUTOS</span></div>
+          <div><strong data-unit="seconds">--</strong><span>SEGUNDOS</span></div>
+        </div>
       </div>
       <p class="easter-see-you">♥ NOS VEMOS LÁ ♥</p>
       <button class="easter-return" id="easterReturn" type="button">VOLTAR AO CONVITE</button>
@@ -5227,22 +5310,52 @@ if (cinematicFinaleEnhanced) {
   layer.setAttribute('aria-hidden','true');
   document.body.appendChild(layer);
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  // Poucas pétalas, distribuição regular e movimento contínuo sem interações bloqueadas.
-  const count=window.innerWidth<600?9:15;
+  // Pétalas delicadas com tamanhos variados, movimento contínuo e sem bloquear cliques.
+  const count=window.innerWidth<600?16:26;
   for(let i=0;i<count;i++){
     const petal=document.createElement('span');
     petal.className='petal';petal.textContent='✾';
     const r=n=>((Math.sin((i+1)*n)*10000)%1+1)%1;
-    const duration=19+r(12.9)*14;
+    const duration=20+r(12.9)*15;
     petal.style.setProperty('--left',(3+r(5.17)*94).toFixed(2)+'%');
-    petal.style.setProperty('--size',(10+r(7.31)*9).toFixed(1)+'px');
+    petal.style.setProperty('--size',(15+r(7.31)*13).toFixed(1)+'px');
     petal.style.setProperty('--duration',duration.toFixed(1)+'s');
     petal.style.setProperty('--delay',(-duration*r(9.71)).toFixed(1)+'s');
     petal.style.setProperty('--drift',((r(4.67)-.5)*110).toFixed(1)+'px');
     petal.style.setProperty('--spin',((r(8.41)-.5)*420).toFixed(0)+'deg');
-    petal.style.setProperty('--alpha',(0.10+r(6.27)*0.13).toFixed(2));
+    petal.style.setProperty('--alpha',(0.30+r(6.27)*0.18).toFixed(2));
     layer.appendChild(petal);
   }
+})();
+</script>
+
+<script id="wedding-extra-info-and-countdown">
+(function(){
+  const trigger=document.getElementById('extraInfoTrigger');
+  const panel=document.getElementById('extraInfoPanel');
+  if(trigger&&panel){
+    trigger.addEventListener('click',function(){
+      const open=trigger.getAttribute('aria-expanded')!=='true';
+      trigger.setAttribute('aria-expanded',String(open));
+      panel.hidden=!open;
+    });
+  }
+  const clock=document.getElementById('easterCountdown');
+  if(!clock)return;
+  // Horário de Rio Branco, Acre: UTC-05:00 (19h locais).
+  const target=new Date('2027-01-11T19:00:00-05:00').getTime();
+  const units=['days','hours','minutes','seconds'];
+  function tick(){
+    const diff=Math.max(0,target-Date.now());
+    const seconds=Math.floor(diff/1000);
+    const values=[Math.floor(seconds/86400),Math.floor(seconds%86400/3600),Math.floor(seconds%3600/60),seconds%60];
+    units.forEach((unit,i)=>{
+      const el=clock.querySelector('[data-unit="'+unit+'"]');
+      if(el)el.textContent=String(values[i]).padStart(2,'0');
+    });
+  }
+  tick();
+  window.setInterval(tick,1000);
 })();
 </script>
 </body>
