@@ -2835,6 +2835,30 @@ body:not(.story-screen) #screenNavigation { pointer-events: none; }
 .hero-logo { width:min(40vw,185px) !important; max-height:25svh; object-fit:contain; background:transparent !important; }
 .cinematic-logo,.final-logo { width:min(43vw,205px) !important; object-fit:contain; background:transparent !important; mix-blend-mode:normal !important; }
 @media(max-height:720px){.couple-art-wrapper{width:min(34vw,160px) !important;max-height:22svh !important}.couple-art{max-height:22svh !important}}
+
+/* Ajuste mobile: rolagem interna da lista de presentes */
+@media (max-width: 700px) {
+  .invitation > section#presentes.experience-screen {
+    display: block !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: 82px 18px 110px !important;
+    align-content: initial;
+    text-align: center;
+  }
+  #presentes.experience-screen > .section-content {
+    width: min(100%, 520px);
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 auto;
+    padding-bottom: 25px;
+  }
+  #presentes .gift-options { grid-template-columns: 1fr; }
+  #presentes .gift-card { min-width: 0; }
+}
+
 </style>
 <style id="continuousStoryAndReadability">
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
