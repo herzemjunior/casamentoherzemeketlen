@@ -2859,6 +2859,18 @@ body:not(.story-screen) #screenNavigation { pointer-events: none; }
   #presentes .gift-card { min-width: 0; }
 }
 
+
+/* Formulário individual integrado ao Netlify Forms */
+.wedding-rsvp-form{width:min(100%,500px);margin:26px auto 0;text-align:center;position:relative;z-index:2}
+.rsvp-honeypot{position:absolute!important;left:-9999px!important;opacity:0!important;pointer-events:none!important}
+.rsvp-field-label{display:block;text-align:left;font-size:12px;letter-spacing:.16em;font-weight:700;color:#392a26;margin-bottom:9px}
+.rsvp-name-input{box-sizing:border-box;width:100%;border:1px solid rgba(58,70,52,.5);border-radius:7px;padding:16px 17px;background:rgba(250,247,240,.90);color:#392a26!important;font:inherit;font-size:17px;outline-offset:3px}
+.rsvp-name-input:focus{outline:2px solid #626d59}
+.rsvp-one-person{font-size:13px;color:#392a26!important;opacity:.9;margin:12px 0 0}
+.wedding-rsvp-form .rsvp-buttons{margin-top:22px}
+.rsvp-feedback{min-height:1.5em;margin:16px 0;color:#392a26!important;font-size:14px;line-height:1.5}
+.wedding-rsvp-form button:disabled{opacity:.55;cursor:wait}
+
 </style>
 <style id="continuousStoryAndReadability">
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -3756,25 +3768,19 @@ body,.cover,.hero,.countdown-section,.ceremony-section,.gifts-section,.final-sec
           desse dia com carinho.
         </p>
 
-        <div class="rsvp-buttons">
-
-          <button
-            class="primary-button rose-button"
-            type="button"
-            data-rsvp="yes"
-          >
-            SIM, ESTAREI PRESENTE
-          </button>
-
-          <button
-            class="secondary-button"
-            type="button"
-            data-rsvp="no"
-          >
-            NÃO PODEREI COMPARECER
-          </button>
-
-        </div>
+        <form id="weddingRsvpForm" name="confirmacao-casamento" method="POST" data-netlify="true" netlify-honeypot="campo-extra" class="wedding-rsvp-form">
+          <input type="hidden" name="form-name" value="confirmacao-casamento">
+          <p class="rsvp-honeypot"><label>Não preencha este campo: <input name="campo-extra" tabindex="-1" autocomplete="off"></label></p>
+          <label for="rsvpGuest" class="rsvp-field-label">SEU NOME</label>
+          <input id="rsvpGuest" class="rsvp-name-input" name="convidado" type="text" maxlength="120" required autocomplete="name" placeholder="Seu nome completo">
+          <input id="rsvpAnswer" type="hidden" name="presenca" value="">
+          <p class="rsvp-one-person">Confirmação individual: uma resposta por convidado.</p>
+          <div class="rsvp-buttons">
+            <button class="primary-button rose-button" type="button" data-rsvp="yes">SIM, ESTAREI PRESENTE</button>
+            <button class="secondary-button" type="button" data-rsvp="no">NÃO PODEREI COMPARECER</button>
+          </div>
+          <p id="rsvpFeedback" class="rsvp-feedback" role="status" aria-live="polite"></p>
+        </form>
 
       </div>
 
@@ -4423,26 +4429,40 @@ downloadCalendar?.addEventListener("click",downloadWeddingIcs);
 ========================================= */
 
 const rsvpButtons = document.querySelectorAll("[data-rsvp]");
+const weddingRsvpForm = document.getElementById("weddingRsvpForm");
+const rsvpGuest = document.getElementById("rsvpGuest");
+const rsvpAnswer = document.getElementById("rsvpAnswer");
+const rsvpFeedback = document.getElementById("rsvpFeedback");
+if (guest && guest.trim()) rsvpGuest.value = guest.trim();
 
 rsvpButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    const answer = button.dataset.rsvp;
-    window.weddingProgress?.markVisited("confirmar");
-
-    if (answer === "yes") {
-      openModal(
-        "Que alegria!",
-        "Ficamos muito felizes em saber que você estará conosco neste dia tão especial."
-      );
-    } else {
-      openModal(
-        "Sentiremos sua falta.",
-        "Obrigado por nos avisar. Ficamos felizes por você fazer parte da nossa história."
-      );
+  button.addEventListener("click", async () => {
+    if (!weddingRsvpForm.reportValidity()) return;
+    const answer = button.dataset.rsvp === "yes" ? "Sim" : "Não";
+    rsvpAnswer.value = answer;
+    const nome = rsvpGuest.value.trim();
+    if (!nome) { rsvpGuest.focus(); return; }
+    rsvpButtons.forEach(btn => btn.disabled = true);
+    rsvpFeedback.textContent = "Enviando sua confirmação…";
+    try {
+      const formData = new FormData(weddingRsvpForm);
+      const response = await fetch(window.location.pathname || "/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString()
+      });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      window.weddingProgress?.markVisited("confirmar");
+      rsvpFeedback.textContent = "Resposta enviada com sucesso! Obrigado por confirmar.";
+      openModal(answer === "Sim" ? "Presença confirmada!" : "Resposta registrada!",
+        answer === "Sim" ? "Que alegria, " + nome + "! Sua presença foi registrada. Esperamos você no nosso grande dia!" : "Obrigado por nos avisar, " + nome + ". Sentiremos sua falta!");
+      rsvpButtons.forEach(btn => btn.disabled = false);
+    } catch (error) {
+      rsvpFeedback.textContent = "Não foi possível enviar. Verifique sua conexão e tente novamente. A confirmação ainda não foi registrada.";
+      rsvpButtons.forEach(btn => btn.disabled = false);
     }
   });
 });
-
 
 /* =========================================
    PRESENTES
