@@ -3256,6 +3256,17 @@ body,.cover,.hero,.countdown-section,.ceremony-section,.gifts-section,.final-sec
 @media(max-width:700px){#presentes.experience-screen{align-items:flex-start!important;padding-top:70px!important;padding-bottom:35px!important}}
 /* O jogo retrô e o vídeo cinematográfico mantêm fundos próprios para não comprometer a arte. */
 </style>
+<style id="petal-fall-style">
+/* Pétalas discretas, sempre atrás do conteúdo interativo. */
+#petal-fall-layer{position:fixed;inset:0;z-index:850;pointer-events:none;overflow:hidden;contain:layout paint;isolation:isolate}
+#petal-fall-layer .petal{position:absolute;top:-12vh;left:var(--left);font-family:Georgia,serif;font-size:var(--size);line-height:1;color:#8b605e;opacity:0;filter:drop-shadow(0 1px 1px rgba(255,255,255,.15));animation:petal-descend var(--duration) linear var(--delay) infinite;will-change:transform,opacity;user-select:none}
+@keyframes petal-descend{0%{transform:translate3d(0,-8vh,0) rotate(0deg);opacity:0}9%{opacity:var(--alpha)}86%{opacity:var(--alpha)}100%{transform:translate3d(var(--drift),118vh,0) rotate(var(--spin));opacity:0}}
+/* As telas, cartões e textos ficam acima das pétalas. */
+.cover,.invitation,.experience-screen{isolation:isolate}
+.cover .opening-scene,.invitation .section-content,.invitation .hero-inner{position:relative;z-index:2}
+#petal-fall-layer .petal{opacity:0}
+@media(prefers-reduced-motion:reduce){#petal-fall-layer{display:none}}
+</style>
 </head>
 
 <body>
@@ -5187,6 +5198,32 @@ if (cinematicFinaleEnhanced) {
   });
 }
 
+</script>
+<script id="petal-fall-script">
+(function(){
+  if(document.getElementById('petal-fall-layer'))return;
+  const layer=document.createElement('div');
+  layer.id='petal-fall-layer';
+  layer.setAttribute('aria-hidden','true');
+  document.body.appendChild(layer);
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  // Poucas pétalas, distribuição regular e movimento contínuo sem interações bloqueadas.
+  const count=window.innerWidth<600?9:15;
+  for(let i=0;i<count;i++){
+    const petal=document.createElement('span');
+    petal.className='petal';petal.textContent='✾';
+    const r=n=>((Math.sin((i+1)*n)*10000)%1+1)%1;
+    const duration=19+r(12.9)*14;
+    petal.style.setProperty('--left',(3+r(5.17)*94).toFixed(2)+'%');
+    petal.style.setProperty('--size',(10+r(7.31)*9).toFixed(1)+'px');
+    petal.style.setProperty('--duration',duration.toFixed(1)+'s');
+    petal.style.setProperty('--delay',(-duration*r(9.71)).toFixed(1)+'s');
+    petal.style.setProperty('--drift',((r(4.67)-.5)*110).toFixed(1)+'px');
+    petal.style.setProperty('--spin',((r(8.41)-.5)*420).toFixed(0)+'deg');
+    petal.style.setProperty('--alpha',(0.10+r(6.27)*0.13).toFixed(2));
+    layer.appendChild(petal);
+  }
+})();
 </script>
 </body>
 </html>
